@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="YouTube video to MP4 or MP3 converter for fast downloads.">
+    <title>YouTube Converter</title>
+    <!-- External Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="michigi">
+            <h1>Michigi</h1>
+        </div>
+
+        <div class="yvc">
+            <h1>YouTube Video Converter</h1>
+        </div>
+
+        <div class="converter">
+            <label for="video-url">YouTube Video URL:</label>
+            <input type="text" id="video-url" placeholder="Enter YouTube URL" aria-label="YouTube video URL">
+            <label for="format">Choose Format:</label>
+            <select id="format" aria-label="Choose format">
+                <option value="mp4">MP4</option>
+                <option value="mp3">MP3</option>
+            </select>
+        </div>
+
+        <div class="convert-btn">
+            <button id="convert-button">Convert</button>
+        </div>
+
+        <div class="progress" id="progress" style="display: none;">
+            <label for="progress-bar">Conversion Progress:</label>
+            <progress id="progress-bar" value="0" max="100"></progress>
+        </div>
+
+        <div class="loading" id="loading" style="display: none;">Loading...</div>
+
+        <div class="result" id="result" style="display: none;">
+            <img id="thumbnail" src="" alt="Video Thumbnail" style="display: none; width: 100%; max-width: 300px; margin-bottom: 10px; border-radius: 8px;">
+            <h3 id="video-title" style="display: none;"></h3>
+            <a id="download-link" href="#" download>Download</a>
+        </div>
+        
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/script.js"></script>
+</body>
+</html>

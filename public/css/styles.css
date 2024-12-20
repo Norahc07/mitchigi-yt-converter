@@ -1,0 +1,112 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+}
+
+.container {
+    text-align: center;
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    max-width: 800px;
+    margin: 20px auto;
+    box-sizing: border-box;
+}
+
+.michigi {
+    font-family: 'Cinzel Decorative', sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+}
+
+.yvc {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: #DF37D6;
+}
+.converter {
+    position: relative;
+}
+
+.converter label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+.converter input, .converter select {
+    box-sizing: border-box; /* Ensures padding and border are included in the width */
+    padding: 15px;
+    margin: 5px 0;
+    border: 1px solid #DF37D6;
+    border-radius: 8px;
+    width: 80%;
+    font-size: 16px; /* Ensures the text size inside matches */
+    appearance: none; /* Removes default browser styles for select */
+}
+/* Custom styling for the select dropdown */
+.converter select {
+    appearance: none; 
+    background: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M7 10l5 5 5-5H7z"/></svg>') no-repeat right 10px center, white;
+    background-size: 16px;
+    padding-right: 40px; /* Add space for the dropdown arrow */
+}
+
+#convert-button {
+    background-color: #DF37D6;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#convert-button:hover {
+    background-color: #BB2BAF;
+    transform: scale(1.05);
+}
+
+.progress {
+    margin: 20px 0;
+}
+
+.loading {
+    margin-top: 20px;
+    font-size: 18px;
+}
+
+.result {
+    margin-top: 20px;
+    text-align: center;
+}
+
+video {
+    width: 100%;
+    max-width: 500px;
+    margin: 10px auto;
+    display: block;
+}
+
+#download-link {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #DF37D6;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#download-link:hover {
+    background-color: #BB2BAF;
+    transform: scale(1.05);
+}

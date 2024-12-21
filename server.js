@@ -21,13 +21,19 @@ app.get('/video-details', (req, res) => {
         return res.status(400).json({ error: 'Missing URL parameter' });
     }
 
-    const ytDlp = spawn('yt-dlp', ['-j', '--no-check-certificate', url]);
+    console.log('Fetching video details for URL:', url);
+
+    const ytDlp = spawn('yt-dlp', ['-j', '--no-check-certificate', '--restrict-filenames', url]);
 
     let data = '';
 
     ytDlp.stdout.on('data', (chunk) => {
         data += chunk;
     });
+
+    ytDlp.stderr.on('data', (chunk) => {
+        console.error(`yt-dlp error: ${chunk.toString()}`);
+    });    
 
     ytDlp.on('close', (code) => {
         if (code !== 0) {

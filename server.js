@@ -27,14 +27,9 @@ app.get('/video-details', (req, res) => {
     console.log('Fetching video details for URL:', url);
 
     const cookiesPath = path.join(__dirname, 'cookies.txt');
-
     const ytDlp = spawn('yt-dlp', ['--cookies', cookiesPath, '-j', '--no-check-certificate', '--restrict-filenames', url]);
 
     let data = '';
-    console.log('Server started successfully on port', port);
-    console.log('Express server listening on port', port);
-    console.log('CORS enabled for all routes');
-    console.log('Static files served from public directory');
 
     ytDlp.stdout.on('data', (chunk) => {
         data += chunk;
@@ -47,11 +42,13 @@ app.get('/video-details', (req, res) => {
     ytDlp.on('close', (code) => {
         if (code !== 0) {
             console.error(`yt-dlp exited with code ${code}`);
-            return res.status(500).json({ error: 'yt-dlp process failed. Check video URL or availability.' });
+            // Ensure no other response is sent
+            if (!res.headersSent) {
+                return res.status(500).json({ error: 'yt-dlp process failed. Check video URL or availability.' });
+            }
         }
 
         try {
-            console.log('Raw yt-dlp output:', data); // Debugging
             const videoInfo = JSON.parse(data);
 
             if (!videoInfo.thumbnails || videoInfo.thumbnails.length === 0) {
@@ -61,16 +58,24 @@ app.get('/video-details', (req, res) => {
             const thumbnail = videoInfo.thumbnails[videoInfo.thumbnails.length - 1].url;
             const title = videoInfo.title;
 
-            res.json({ thumbnail, title });
+            if (!res.headersSent) {
+                return res.json({ thumbnail, title });
+            }
         } catch (err) {
             console.error('Error parsing yt-dlp output:', err);
-            res.status(500).json({ error: 'Failed to parse video details' });
+            // Ensure no other response is sent
+            if (!res.headersSent) {
+                return res.status(500).json({ error: 'Failed to parse video details' });
+            }
         }
     });
 
     ytDlp.on('error', (err) => {
         console.error('yt-dlp error:', err);
-        res.status(500).json({ error: 'Failed to fetch video details' });
+        // Ensure no other response is sent
+        if (!res.headersSent) {
+            return res.status(500).json({ error: 'Failed to fetch video details' });
+        }
     });
 });
 

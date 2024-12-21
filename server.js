@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { spawn } = require('child_process');
+const path = require('path');
 const app = express();
 const port = 3000;
 
@@ -23,7 +24,9 @@ app.get('/video-details', (req, res) => {
 
     console.log('Fetching video details for URL:', url);
 
-    const ytDlp = spawn('yt-dlp', ['--cookies', 'path/to/cookies.txt', '-j', '--no-check-certificate','--restrict-filenames', url]);
+    const cookiesPath = path.join(__dirname, 'cookies.txt');
+
+    const ytDlp = spawn('yt-dlp', ['--cookies', cookiesPath, '-j', '--no-check-certificate','--restrict-filenames', url]);
 
     let data = '';
 

@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const ytDlpBin = require('yt-dlp-bin');
 const { spawn } = require('child_process');
 const path = require('path');
 const os = require('os');
@@ -26,8 +27,8 @@ app.get('/video-details', (req, res) => {
 
     console.log('Fetching video details for URL:', url);
 
-    const cookiesPath = path.join(__dirname, 'cookies.txt');
-    const ytDlp = spawn('yt-dlp', ['--cookies', cookiesPath, '-j', '--no-check-certificate', '--restrict-filenames', url]);
+    // Use yt-dlp-bin to fetch video details
+    const ytDlp = spawn(ytDlpBin, ['-j', '--no-check-certificate', '--restrict-filenames', url]);
 
     let data = '';
 

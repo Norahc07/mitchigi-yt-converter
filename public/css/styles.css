@@ -87,6 +87,37 @@ body {
     text-align: center;
 }
 
+.result img {
+    display: block;
+    margin: 0 auto 10px; /* Centers the thumbnail and adds space below */
+    border-radius: 8px;
+    max-width: 300px;
+    width: 100%;
+}
+
+.result h3 {
+    margin: 10px 0;
+    font-size: 20px;
+    color: #333;
+}
+
+.result #download-link {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #DF37D6;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.result #download-link:hover {
+    background-color: #BB2BAF;
+    transform: scale(1.05);
+}
+
 video {
     width: 100%;
     max-width: 500px;

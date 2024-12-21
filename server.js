@@ -6,19 +6,21 @@ const port = 3000;
 
 app.use(express.json());
 app.use(cors());
-
 app.use(express.static('public'));
 
-// Serve the frontend (HTML) when accessing the root URL
+// Serve the frontend (HTML)
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html'); // Replace with the path to your HTML file
+    res.sendFile(__dirname + '/index.html');
 });
 
-// Fetch video details using yt-dlp
+// Fetch video details
 app.get('/video-details', (req, res) => {
     const { url } = req.query;
 
-    // Call yt-dlp via spawn to fetch video info
+    if (!url) {
+        return res.status(400).json({ error: 'Missing URL parameter' });
+    }
+
     const ytDlp = spawn('yt-dlp', ['-j', '--no-check-certificate', url]);
 
     let data = '';
@@ -27,10 +29,21 @@ app.get('/video-details', (req, res) => {
         data += chunk;
     });
 
-    ytDlp.on('close', () => {
+    ytDlp.on('close', (code) => {
+        if (code !== 0) {
+            console.error(`yt-dlp exited with code ${code}`);
+            return res.status(500).json({ error: 'yt-dlp process failed. Check video URL or availability.' });
+        }
+
         try {
+            console.log('Raw yt-dlp output:', data); // Debugging
             const videoInfo = JSON.parse(data);
-            const thumbnail = videoInfo.thumbnails.pop().url;
+
+            if (!videoInfo.thumbnails || videoInfo.thumbnails.length === 0) {
+                throw new Error('No thumbnails available');
+            }
+
+            const thumbnail = videoInfo.thumbnails[videoInfo.thumbnails.length - 1].url;
             const title = videoInfo.title;
 
             res.json({ thumbnail, title });
@@ -46,45 +59,39 @@ app.get('/video-details', (req, res) => {
     });
 });
 
-// Handle downloads
+// Download video
 app.get('/download', (req, res) => {
     const { url, format } = req.query;
 
-    const streamOptions = format === 'mp3' ? ['-x', '--audio-format', 'mp3'] : [];
+    if (!url || !format) {
+        return res.status(400).json({ error: 'Missing URL or format parameter' });
+    }
 
-    // Set the correct content-type and file extension for MP4 or MP3
+    const streamOptions = format === 'mp3' ? ['-x', '--audio-format', 'mp3'] : [];
     const fileExtension = format === 'mp3' ? 'mp3' : 'mp4';
     const contentType = format === 'mp3' ? 'audio/mpeg' : 'video/mp4';
 
-    // Set the content-disposition header to force download with the proper extension
     res.setHeader('Content-Disposition', `attachment; filename="video.${fileExtension}"`);
     res.setHeader('Content-Type', contentType);
 
-    const ytDlp = spawn('yt-dlp', [
-        ...streamOptions, 
-        '--no-check-certificate', 
-        url
-    ]);
+    const ytDlp = spawn('yt-dlp', [...streamOptions, '--no-check-certificate', url]);
 
-    ytDlp.stdout.pipe(res);  // Pipe the video or audio stream to the response
+    ytDlp.stdout.pipe(res);
 
-    ytDlp.stderr.on('data', (data) => {
-        console.warn('yt-dlp stderr:', data.toString());
+    ytDlp.on('error', (err) => {
+        console.error('yt-dlp error:', err);
+        res.status(500).json({ error: 'Failed to download video' });
     });
 
     ytDlp.on('close', (code) => {
         if (code !== 0) {
             console.error(`yt-dlp process exited with code ${code}`);
-            res.status(500).json({ error: 'Failed to download video' });
+            res.status(500).json({ error: 'yt-dlp process failed' });
         }
-    });
-
-    ytDlp.on('error', (err) => {
-        console.error('yt-dlp error:', err);
-        res.status(500).json({ error: 'Failed to start yt-dlp process' });
     });
 });
 
+// Start server
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });

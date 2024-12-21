@@ -30,6 +30,11 @@ document.getElementById('convert-button').addEventListener('click', async functi
             throw new Error(error.error || 'Failed to fetch video details');
         }
         const data = await response.json();
+        console.log('Video Details:', data); // Debugging log
+
+        if (!data.thumbnail || !data.title) {
+            throw new Error('Invalid video details received');
+        }
 
         // Display video details
         thumbnailElement.src = data.thumbnail;
@@ -54,6 +59,6 @@ document.getElementById('convert-button').addEventListener('click', async functi
 
 // Simple URL validation for YouTube
 function isValidUrl(url) {
-    const youtubeRegex = /^(https?\:\/\/)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)\/(?:watch\?v=|embed\/)([a-zA-Z0-9_-]{11})/;
+    const youtubeRegex = /^(https?\:\/\/)?(www\.)?(youtube|youtu|youtube-nocookie)\.(com|be)\/(?:watch\?v=|embed\/|v\/|.+\?v=)([a-zA-Z0-9_-]{11})/;
     return youtubeRegex.test(url);
 }

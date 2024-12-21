@@ -16,6 +16,9 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
 
+// Path to yt-dlp.exe (adjust if needed)
+const ytDlpPath = path.join(__dirname, 'yt-dlp.exe');
+
 // Fetch video details
 app.get('/video-details', (req, res) => {
     const { url } = req.query;
@@ -27,7 +30,7 @@ app.get('/video-details', (req, res) => {
     console.log('Fetching video details for URL:', url);
 
     const cookiesPath = path.join(__dirname, 'cookies.txt');
-    const ytDlp = spawn('yt-dlp', ['--cookies', cookiesPath, '-j', '--no-check-certificate', '--restrict-filenames', url]);
+    const ytDlp = spawn(ytDlpPath, ['--cookies', cookiesPath, '-j', '--no-check-certificate', '--restrict-filenames', url]);
 
     let data = '';
 
@@ -106,7 +109,7 @@ app.get('/download', (req, res) => {
     res.setHeader('Content-Type', contentType);
 
     // Spawn yt-dlp to download the video and save it to the Downloads folder
-    const ytDlp = spawn('yt-dlp', [...streamOptions, '--no-check-certificate', '-o', filePath, url]);
+    const ytDlp = spawn(ytDlpPath, [...streamOptions, '--no-check-certificate', '-o', filePath, url]);
 
     ytDlp.stdout.on('data', (chunk) => {
         console.log('Downloading:', chunk.toString());

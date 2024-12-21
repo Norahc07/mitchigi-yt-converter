@@ -23,7 +23,7 @@ app.get('/video-details', (req, res) => {
 
     console.log('Fetching video details for URL:', url);
 
-    const ytDlp = spawn('yt-dlp', ['-j', '--no-check-certificate', '--restrict-filenames', url]);
+    const ytDlp = spawn('yt-dlp', ['--cookies', 'path/to/cookies.txt', '-j', '--no-check-certificate','--restrict-filenames', url]);
 
     let data = '';
 

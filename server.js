@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const { spawn } = require('child_process');
 const path = require('path');
+const os = require('os');
+const fs = require('fs');
 const app = express();
 const port = 3000;
 
@@ -26,9 +28,13 @@ app.get('/video-details', (req, res) => {
 
     const cookiesPath = path.join(__dirname, 'cookies.txt');
 
-    const ytDlp = spawn('yt-dlp', ['--cookies', cookiesPath, '-j', '--no-check-certificate','--restrict-filenames', url]);
+    const ytDlp = spawn('yt-dlp', ['--cookies', cookiesPath, '-j', '--no-check-certificate', '--restrict-filenames', url]);
 
     let data = '';
+    console.log('Server started successfully on port', port);
+    console.log('Express server listening on port', port);
+    console.log('CORS enabled for all routes');
+    console.log('Static files served from public directory');
 
     ytDlp.stdout.on('data', (chunk) => {
         data += chunk;
@@ -36,7 +42,7 @@ app.get('/video-details', (req, res) => {
 
     ytDlp.stderr.on('data', (chunk) => {
         console.error(`yt-dlp error: ${chunk.toString()}`);
-    });    
+    });
 
     ytDlp.on('close', (code) => {
         if (code !== 0) {
@@ -80,23 +86,54 @@ app.get('/download', (req, res) => {
     const fileExtension = format === 'mp3' ? 'mp3' : 'mp4';
     const contentType = format === 'mp3' ? 'audio/mpeg' : 'video/mp4';
 
-    res.setHeader('Content-Disposition', `attachment; filename="video.${fileExtension}"`);
+    // Get the Downloads folder path
+    const downloadsPath = path.join(os.homedir(), 'Downloads');
+    const fileName = `video.${fileExtension}`;
+    const filePath = path.join(downloadsPath, fileName);
+
+    // Check if the file already exists in Downloads folder
+    if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath); // Remove the existing file if it exists
+    }
+
+    // Set headers to force the download on the client-side
+    res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
     res.setHeader('Content-Type', contentType);
 
-    const ytDlp = spawn('yt-dlp', [...streamOptions, '--no-check-certificate', url]);
+    // Spawn yt-dlp to download the video and save it to the Downloads folder
+    const ytDlp = spawn('yt-dlp', [...streamOptions, '--no-check-certificate', '-o', filePath, url]);
 
-    ytDlp.stdout.pipe(res);
+    ytDlp.stdout.on('data', (chunk) => {
+        console.log('Downloading:', chunk.toString());
+    });
 
-    ytDlp.on('error', (err) => {
-        console.error('yt-dlp error:', err);
-        res.status(500).json({ error: 'Failed to download video' });
+    ytDlp.stderr.on('data', (chunk) => {
+        console.error(`yt-dlp error: ${chunk.toString()}`);
     });
 
     ytDlp.on('close', (code) => {
         if (code !== 0) {
             console.error(`yt-dlp process exited with code ${code}`);
-            res.status(500).json({ error: 'yt-dlp process failed' });
+            return res.status(500).json({ error: 'yt-dlp process failed' });
         }
+
+        // After download is completed, send the file from Downloads folder to the client
+        fs.stat(filePath, (err, stats) => {
+            if (err || !stats.isFile()) {
+                return res.status(500).json({ error: 'File not found after download' });
+            }
+
+            res.download(filePath, fileName, (err) => {
+                if (err) {
+                    console.error('Error sending file:', err);
+                }
+            });
+        });
+    });
+
+    ytDlp.on('error', (err) => {
+        console.error('yt-dlp error:', err);
+        res.status(500).json({ error: 'Failed to download video' });
     });
 });
 

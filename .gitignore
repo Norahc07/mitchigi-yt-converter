@@ -1,0 +1,8 @@
+#Ignore ffmpeg directory
+ffmpeg/
+
+#Ignore yt-dlp executable
+yt-dlp.exe
+
+#Ignore node_modules directory
+node_models/

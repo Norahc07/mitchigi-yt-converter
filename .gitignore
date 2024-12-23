@@ -5,4 +5,4 @@ ffmpeg/
 yt-dlp.exe
 
 #Ignore node_modules directory
-node_models/
+node_modules/

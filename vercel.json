@@ -1,0 +1,13 @@
+{
+    "builds": [
+      {
+        "src": "pages/api/video-details.js",
+        "use": "@vercel/node"
+      }
+    ],
+    "files": [
+      "bin/yt-dlp",
+      "bin/ffmpeg"
+    ]
+  }
+  

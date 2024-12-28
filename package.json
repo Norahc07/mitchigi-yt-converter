@@ -5,6 +5,7 @@
   "main": "server.js",
   "scripts": {
   "start": "node server.js",
+  "prepare": "echo 'Preparing build...'",
   "vercel-build": "npm run prepare && next build"
 },
   "dependencies": {

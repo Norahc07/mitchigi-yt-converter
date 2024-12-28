@@ -1,8 +1,16 @@
-#Ignore ffmpeg directory
-ffmpeg/
-
-#Ignore yt-dlp executable
-yt-dlp.exe
-
-#Ignore node_modules directory
+# Ignore node_modules directory
 node_modules/
+
+# Ignore local environment variables
+.env.local
+.env
+
+# Ignore contents of the bin/ folder, but not the folder itself
+bin/*
+!bin/.gitkeep  # Keep a placeholder inside the bin directory
+
+# Ignore log files
+*.log
+
+# Ignore Next.js build folder
+.next/

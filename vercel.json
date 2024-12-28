@@ -1,13 +1,24 @@
 {
+    "version": 2,
     "builds": [
       {
-        "src": "pages/api/video-details.js",
+        "src": "package.json",
         "use": "@vercel/node"
+      },
+      {
+        "src": "next.config.js",
+        "use": "@vercel/next"
       }
     ],
-    "files": [
-      "bin/yt-dlp",
-      "bin/ffmpeg"
+    "env": {
+      "YTDLP_PATH": "bin/yt-dlp",
+      "FFMPEG_PATH": "bin/ffmpeg"
+    },
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "/$1"
+      }
     ]
   }
   

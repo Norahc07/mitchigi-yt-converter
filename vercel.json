@@ -11,7 +11,7 @@
         }
     ],
     "env": {
-        "YTDLP_PATH": "bin/yt-dlp",
+        "YTDLP_PATH": "bin/yt-dlp_linux",
         "FFMPEG_PATH": "bin/ffmpeg"
     },
     "routes": [

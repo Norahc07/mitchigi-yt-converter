@@ -9,8 +9,8 @@ export default async function handler(req, res) {
     }
 
     try {
-      // Use environment variables to get the binary paths
-      const ytDlpPath = process.env.YTDLP_PATH || path.join(process.cwd(), 'bin', 'yt-dlp');
+      // Use environment variables to get the binary paths (ensure these are set correctly on Vercel)
+      const ytDlpPath = process.env.YTDLP_PATH || path.join(process.cwd(), 'bin', 'yt-dlp_linux');
       const ffmpegPath = process.env.FFMPEG_PATH || path.join(process.cwd(), 'bin', 'ffmpeg');
 
       // Debugging output to check if the paths are correct
@@ -19,7 +19,7 @@ export default async function handler(req, res) {
 
       const command = `${ytDlpPath} -j ${url}`;
 
-      exec(command, { cwd: process.cwd() }, (error, stdout, stderr) => { // Added { cwd: process.cwd() } to set correct working directory
+      exec(command, (error, stdout, stderr) => {
         if (error || stderr) {
           console.error('Error executing yt-dlp:', error || stderr);
           return res.status(500).json({ error: 'Failed to fetch video details' });

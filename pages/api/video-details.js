@@ -9,11 +9,12 @@ export default async function handler(req, res) {
     }
 
     try {
-      // Use environment variables to get the binary paths (ensure these are set correctly on Vercel)
-      const ytDlpPath =
-        process.env.NODE_ENV === 'production'
-          ? path.join(process.cwd(), 'bin', 'yt-dlp_linux') // Linux binary for Vercel production
-          : path.join(process.cwd(), 'bin', 'yt-dlp');      // Default binary for local development
+      // Check if running on Vercel (production)
+      const isVercel = process.env.VERCEL === '1';
+
+      const ytDlpPath = isVercel
+        ? path.join(process.cwd(), 'bin', 'yt-dlp_linux') // Vercel production (Linux binary)
+        : path.join(process.cwd(), 'bin', 'yt-dlp');      // Local development (default binary)
 
       const ffmpegPath = process.env.FFMPEG_PATH || path.join(process.cwd(), 'bin', 'ffmpeg');
 
